@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import com.cst438.services.RegistrationService;
 import com.cst438.services.RegistrationServiceMQ;
 import com.cst438.services.RegistrationServiceREST;
-/
+
 @SpringBootApplication
 public class Cst438GradebookApplication  {
 

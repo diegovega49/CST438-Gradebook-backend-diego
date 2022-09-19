@@ -43,6 +43,11 @@ public class GradeBookController {
 	@Autowired
 	RegistrationService registrationService;
 	
+	@GetMapping("/")
+	public String test() {
+		return "hello";
+	}
+	
 	// get assignments for an instructor that need grading
 	@GetMapping("/gradebook")
 	public AssignmentListDTO getAssignmentsNeedGrading( ) {
