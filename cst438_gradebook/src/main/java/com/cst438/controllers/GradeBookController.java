@@ -161,6 +161,17 @@ public class GradeBookController {
 		
 	}
 	
+	@PutMapping("/gradebook/assignment/{id}")
+	@Transactional
+	public void updateAssignmentName(@RequestBody GradebookDTO gradebook, @PathVariable("id") Integer assignmentId) {
+		
+		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		checkAssignment(assignmentId, email);  // check that user name matches instructor email of the course.
+		
+		System.out.printf("assignment name: s%", gradebook.assignmentName);
+		
+	}
+	
 	private Assignment checkAssignment(int assignmentId, String email) {
 		// get assignment 
 		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
