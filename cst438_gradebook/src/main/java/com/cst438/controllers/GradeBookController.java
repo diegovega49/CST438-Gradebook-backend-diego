@@ -162,7 +162,7 @@ public class GradeBookController {
 		
 	}
 	
-	@PutMapping("/assignment/update/{id}")
+	@PutMapping("/assignments/update/{id}")
 	@Transactional
 	public void updateAssignmentName(@RequestBody AssignmentListDTO assignmentList, @PathVariable("id") Integer assignmentId) {
 		
@@ -181,6 +181,23 @@ public class GradeBookController {
 			updateAssignment.setName(a.assignmentName);
 			assignmentRepository.save(updateAssignment);
 		}
+	}
+	
+	@PostMapping("/assignments/{courseId}")
+	@Transactional
+	public void createAssignment(@RequestBody AssignmentListDTO assignmentList, @PathVariable("courseId") int courseId) {
+		String email = "dwisneski@csumb.edu";
+		
+		Course course = courseRepository.findById(courseId).orElse(null);
+		
+		if (!course.getInstructor().equals(email)) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized");
+		}
+		
+		Assignment newAssignment = new Assignment();
+		
+		newAssignment.set
+		
 	}
 	
 	private Assignment checkAssignment(int assignmentId, String email) {
