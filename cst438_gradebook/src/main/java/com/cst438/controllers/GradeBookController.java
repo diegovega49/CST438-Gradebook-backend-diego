@@ -162,23 +162,24 @@ public class GradeBookController {
 		
 	}
 	
-	@PutMapping("/gradebook/update")
+	@PutMapping("/assignment/update/{id}")
 	@Transactional
-	public void updateAssignmentName(@RequestBody AssignmentListDTO.AssignmentDTO assignment, @RequestParam("assignment") int assignmentId) {
+	public void updateAssignmentName(@RequestBody AssignmentListDTO assignmentList, @PathVariable("id") Integer assignmentId) {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
 		checkAssignment(assignmentId, email);  // check that user name matches instructor email of the course.
 		
-		System.out.printf("assignment id: d%", assignmentId);
+		//System.out.printf("assignment id: d%\n", assignmentId);
 		
-		Assignment updateAssignment = assignmentRepository.findById(assignment.assignmentId).orElse(null);
-		
-		if (updateAssignment == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid assignment id");
-		}
-		
-		updateAssignment.setName(assignment.assignmentName);
-		assignmentRepository.save(updateAssignment);
+		for ( AssignmentListDTO.AssignmentDTO a: assignmentList.assignments ) {
+			Assignment updateAssignment = assignmentRepository.findById(a.assignmentId).orElse(null);
+			
+			if (updateAssignment == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid assignment id");
+			}
+			
+			updateAssignment.setName(a.assignmentName);
+			assignmentRepository.save(updateAssignment);
 		}
 	}
 	
