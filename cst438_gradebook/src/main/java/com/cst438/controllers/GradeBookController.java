@@ -2,7 +2,9 @@ package com.cst438.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,13 @@ import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
 import com.cst438.domain.GradebookDTO;
 import com.cst438.services.RegistrationService;
-//test
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.sql.Date;
+
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001"})
 public class GradeBookController {
@@ -183,9 +191,14 @@ public class GradeBookController {
 		}
 	}
 	
-	@PostMapping("/assignments/{courseId}")
+	@PostMapping("/courses/{courseId}/assignments")
 	@Transactional
-	public void createAssignment(@RequestBody AssignmentListDTO assignmentList, @PathVariable("courseId") int courseId) {
+	public void createAssignment(@RequestBody Map<String, String> json, @PathVariable("courseId") int courseId) {
+		
+		String paramAssignmentName = json.get("assignmentName");
+		String paramDueDate = json.get("dueDate");
+		//String paramCourseTitle = json.get("courseTitle");
+		
 		String email = "dwisneski@csumb.edu";
 		
 		Course course = courseRepository.findById(courseId).orElse(null);
@@ -195,9 +208,16 @@ public class GradeBookController {
 		}
 		
 		Assignment newAssignment = new Assignment();
+		newAssignment.setCourse(course);
+		newAssignment.setNeedsGrading(0);
+		newAssignment.setName(paramAssignmentName);
 		
-		newAssignment.set
+		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate tempDate = LocalDate.parse(paramDueDate, dateformat);
+		Date newDueDate = Date.valueOf(tempDate);
+		newAssignment.setDueDate(newDueDate);
 		
+		assignmentRepository.save(newAssignment);
 	}
 	
 	private Assignment checkAssignment(int assignmentId, String email) {
