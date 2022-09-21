@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -161,15 +162,25 @@ public class GradeBookController {
 		
 	}
 	
-	@PutMapping("/gradebook/assignment/{id}")
+	@PutMapping("/gradebook/update")
 	@Transactional
-	public void updateAssignmentName(@RequestBody GradebookDTO gradebook, @PathVariable("id") Integer assignmentId) {
+	public void updateAssignmentName(@RequestBody AssignmentListDTO assignmentList, @RequestParam("assignment") int assignmentId) {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
 		checkAssignment(assignmentId, email);  // check that user name matches instructor email of the course.
 		
-		System.out.printf("assignment name: s%", gradebook.assignmentName);
+		System.out.printf("assignment id: d%", assignmentId);
 		
+		for ( AssignmentListDTO.AssignmentDTO a: assignmentList.assignments ) {
+			Assignment updateAssignment = assignmentRepository.findById(a.assignmentId).orElse(null);
+			
+			if (updateAssignment == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid assignment id");
+			}
+			
+			updateAssignment.setName(a.assignmentName);
+			assignmentRepository.save(updateAssignment);
+		}
 	}
 	
 	private Assignment checkAssignment(int assignmentId, String email) {
