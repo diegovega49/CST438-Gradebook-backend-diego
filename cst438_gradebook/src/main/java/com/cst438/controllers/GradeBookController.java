@@ -184,7 +184,7 @@ public class GradeBookController {
 			Assignment updateAssignment = assignmentRepository.findById(a.assignmentId).orElse(null);
 			
 			if (updateAssignment == null) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid assignment id");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid assignment id:" + a.assignmentId);
 			}
 			
 			updateAssignment.setName(a.assignmentName);
@@ -221,8 +221,20 @@ public class GradeBookController {
 		assignmentRepository.save(newAssignment);
 	}
 	
-	@DeleteMapping("/assignments/delete/{id}")
-	public void deleteAssignment(@PathVariable Integer assignmentId) {
+	@DeleteMapping("/assignments/delete")
+	public void deleteAssignment(@RequestParam("id") Integer assignmentId) {
+		
+		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		checkAssignment(assignmentId, email);
+		
+		Assignment deleteAssignment = assignmentRepository.findById(assignmentId).orElse(null);
+		
+		if (deleteAssignment.getNeedsGrading() == 0) {
+			assignmentRepository.delete(deleteAssignment);
+		}
+		else {
+			
+		}
 		
 	}
 	
