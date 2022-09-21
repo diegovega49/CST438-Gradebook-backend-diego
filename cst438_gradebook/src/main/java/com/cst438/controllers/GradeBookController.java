@@ -233,7 +233,7 @@ public class GradeBookController {
 			assignmentRepository.delete(deleteAssignment);
 		}
 	}
-	
+	//test
 	private Assignment checkAssignment(int assignmentId, String email) {
 		// get assignment 
 		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
