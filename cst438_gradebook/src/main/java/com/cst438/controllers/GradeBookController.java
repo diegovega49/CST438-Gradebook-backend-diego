@@ -232,10 +232,6 @@ public class GradeBookController {
 		if (deleteAssignment.getNeedsGrading() == 0) {
 			assignmentRepository.delete(deleteAssignment);
 		}
-		else {
-			
-		}
-		
 	}
 	
 	private Assignment checkAssignment(int assignmentId, String email) {
