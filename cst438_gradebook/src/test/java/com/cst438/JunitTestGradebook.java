@@ -17,6 +17,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import com.cst438.controllers.GradeBookController;
@@ -261,13 +264,51 @@ public class JunitTestGradebook {
 	}
 	
 	//hw2 test methods
+	@Test
 	public void assignmentDidDelete( ) throws Exception {
-		//create assignment
-		Assignment assignment = new Assignment();
 		
+		MockHttpServletResponse response;
+		
+		//create assignment
+		
+		Assignment assignment = new Assignment();
 		assignment.setName("test hw");
 		assignment.setNeedsGrading(0);
 		
+		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate tempDate = LocalDate.parse("2022-09-01", dateformat);
+		Date dueDate = Date.valueOf(tempDate);
+		assignment.setDueDate(dueDate);
+		
+		Course course = new Course();
+		course.setCourse_id(TEST_COURSE_ID);
+		course.setAssignments(new java.util.ArrayList<Assignment>());
+		course.setEnrollments(new java.util.ArrayList<Enrollment>());
+		course.setInstructor(TEST_INSTRUCTOR_EMAIL);
+		course.setSemester(TEST_SEMESTER);
+		course.setYear(TEST_YEAR);
+		course.setTitle("CST 338");
+		
+		Enrollment enrollment = new Enrollment();
+		enrollment.setCourse(course);
+		course.getEnrollments().add(enrollment);
+		enrollment.setId(TEST_COURSE_ID);
+		enrollment.setStudentEmail(TEST_STUDENT_EMAIL);
+		enrollment.setStudentName(TEST_STUDENT_NAME);
+		
+		assignment.setCourse(course);
+		course.getAssignments().add(assignment);
+		
+		
+		// given -- stubs for database repositories that return test data
+		given(assignmentRepository.findById(1)).willReturn(Optional.of(assignment));
+
+		response = mvc.perform(MockMvcRequestBuilders.delete("/assignments/delete").accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		assertEquals(200, response.getStatus());
+		
+		verify(assignmentRepository, times(1)).delete(assignment);
 		
 	}
 }
