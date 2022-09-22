@@ -170,7 +170,22 @@ public class GradeBookController {
 		}
 		
 	}
+
+	private Assignment checkAssignment(int assignmentId, String email) {
+		// get assignment 
+		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
+		if (assignment == null) {
+			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Assignment not found. "+assignmentId );
+		}
+		// check that user is the course instructor
+		if (!assignment.getCourse().getInstructor().equals(email)) {
+			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
+		}
+		
+		return assignment;
+	}
 	
+	//hw2 api methods
 	@PutMapping("/assignments/update/{id}")
 	@Transactional
 	public void updateAssignmentName(@RequestBody AssignmentListDTO assignmentList, @PathVariable("id") Integer assignmentId) {
@@ -232,20 +247,6 @@ public class GradeBookController {
 		if (deleteAssignment.getNeedsGrading() == 0) {
 			assignmentRepository.delete(deleteAssignment);
 		}
-	}
-	//test
-	private Assignment checkAssignment(int assignmentId, String email) {
-		// get assignment 
-		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
-		if (assignment == null) {
-			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Assignment not found. "+assignmentId );
-		}
-		// check that user is the course instructor
-		if (!assignment.getCourse().getInstructor().equals(email)) {
-			throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Not Authorized. " );
-		}
-		
-		return assignment;
 	}
 
 }
