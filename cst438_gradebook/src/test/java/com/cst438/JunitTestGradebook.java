@@ -242,11 +242,6 @@ public class JunitTestGradebook {
 		updatedag.setScore("88");
 		verify(assignmentGradeRepository, times(1)).save(updatedag);
 	}
-	
-	public void assignmentDidDelete( ) throws Exception {
-		//create assignment
-		
-	}
 
 	private static String asJsonString(final Object obj) {
 		try {
@@ -264,5 +259,15 @@ public class JunitTestGradebook {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
+	//hw2 test methods
+	public void assignmentDidDelete( ) throws Exception {
+		//create assignment
+		Assignment assignment = new Assignment();
+		
+		assignment.setName("test hw");
+		assignment.setNeedsGrading(0);
+		
+		
+	}
 }
