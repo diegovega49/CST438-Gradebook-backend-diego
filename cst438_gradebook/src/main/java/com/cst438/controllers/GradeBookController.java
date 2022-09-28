@@ -2,16 +2,20 @@ package com.cst438.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +30,12 @@ import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
 import com.cst438.domain.GradebookDTO;
 import com.cst438.services.RegistrationService;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.sql.Date;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001"})
@@ -160,7 +170,7 @@ public class GradeBookController {
 		}
 		
 	}
-	
+
 	private Assignment checkAssignment(int assignmentId, String email) {
 		// get assignment 
 		Assignment assignment = assignmentRepository.findById(assignmentId).orElse(null);
@@ -173,6 +183,70 @@ public class GradeBookController {
 		}
 		
 		return assignment;
+	}
+	
+	//hw2 api methods
+	@PutMapping("/assignments/update/{id}")
+	@Transactional
+	public void updateAssignmentName(@RequestBody AssignmentListDTO assignmentList, @PathVariable("id") Integer assignmentId) {
+		
+		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		checkAssignment(assignmentId, email);  // check that user name matches instructor email of the course.
+		
+		//System.out.printf("assignment id: d%\n", assignmentId);
+		
+		for ( AssignmentListDTO.AssignmentDTO a: assignmentList.assignments ) {
+			Assignment updateAssignment = assignmentRepository.findById(a.assignmentId).orElse(null);
+			
+			if (updateAssignment == null) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid assignment id:" + a.assignmentId);
+			}
+			
+			updateAssignment.setName(a.assignmentName);
+			assignmentRepository.save(updateAssignment);
+		}
+	}
+	
+	@PostMapping("/courses/{courseId}/assignments")
+	@Transactional
+	public void createAssignment(@RequestBody Map<String, String> json, @PathVariable("courseId") int courseId) {
+		
+		String paramAssignmentName = json.get("assignmentName");
+		String paramDueDate = json.get("dueDate");
+		//String paramCourseTitle = json.get("courseTitle");
+		
+		String email = "dwisneski@csumb.edu";
+		
+		Course course = courseRepository.findById(courseId).orElse(null);
+		
+		if (!course.getInstructor().equals(email)) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized");
+		}
+		
+		Assignment newAssignment = new Assignment();
+		newAssignment.setCourse(course);
+		newAssignment.setNeedsGrading(0);
+		newAssignment.setName(paramAssignmentName);
+		
+		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate tempDate = LocalDate.parse(paramDueDate, dateformat);
+		Date newDueDate = Date.valueOf(tempDate);
+		newAssignment.setDueDate(newDueDate);
+		
+		assignmentRepository.save(newAssignment);
+	}
+	
+	@DeleteMapping("/assignments/delete")
+	public void deleteAssignment(@RequestParam("id") Integer assignmentId) {
+		
+		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		checkAssignment(assignmentId, email);
+		
+		Assignment deleteAssignment = assignmentRepository.findById(assignmentId).orElse(null);
+		
+		if (deleteAssignment.getNeedsGrading() == 0) {
+			assignmentRepository.delete(deleteAssignment);
+		}
 	}
 
 }
