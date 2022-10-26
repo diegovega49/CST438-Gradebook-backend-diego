@@ -56,7 +56,7 @@ public class RegistrationServiceMQ extends RegistrationService {
 		}
 		e.setCourse(c);
 		enrollmentRepository.save(e);
-		System.out.println("student enrolled");
+		System.out.println("student enrolled success");
 	}
 
 	// sender of messages to Registration Service
