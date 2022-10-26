@@ -55,8 +55,8 @@ public class RegistrationServiceMQ extends RegistrationService {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST,"Course id not found");
 		}
 		e.setCourse(c);
-		e = enrollmentRepository.save(e);
-		enrollmentDTO.id = e.getId();
+		enrollmentRepository.save(e);
+		System.out.println("student enrolled");
 	}
 
 	// sender of messages to Registration Service
