@@ -27,7 +27,7 @@ public class E2E_TestCreateAssignment {
 	public static final int TEST_COURSE_ID = 999001;
 	public static final String TEST_COURSE_TITLE = "cst363-database";
 	public static final String TEST_DUE_DATE = "2022-11-01";
-	public static final String TEST_NAME = "homework 5";
+	public static final String TEST_NAME = "test 5";
 	
 	@Autowired
 	AssignmentRepository assignmentRepository;
@@ -37,11 +37,13 @@ public class E2E_TestCreateAssignment {
 		//delete if assignment exists
 		Assignment x = null;
 		do {
-			x = assignmentRepository.findByNameAndCourseId(TEST_NAME,TEST_COURSE_ID);
+			x = assignmentRepository.findById(TEST_COURSE_ID).orElse(null);
 			
 			if (x != null) {
 				assignmentRepository.delete(x);
 			}
+			if (x == null)
+				System.out.print("assignemnt is null\n");
 			
 		} while (x != null);
 		
@@ -76,15 +78,17 @@ public class E2E_TestCreateAssignment {
 			we = driver.findElement(By.name("courseTitle"));
 			we.sendKeys(TEST_COURSE_TITLE);
 			
-			we = driver.findElement(By.id("Add"));
+			we = driver.findElement(By.id("AddnewAssignment"));
 			we.click();
-			Thread.sleep(SLEEP_DURATION);
+			Thread.sleep(2000);
 			
-			Assignment a = assignmentRepository.findByNameAndCourseId(TEST_NAME,TEST_COURSE_ID);
+			Assignment a = assignmentRepository.findById(TEST_COURSE_ID).orElse(null);
+			if (a == null)
+				System.out.print("assignemnt is null\n");
 			
 			assertNotNull(a,"assignment not found");
 			
-			Assignment a1 = assignmentRepository.findByNameAndCourseId(TEST_NAME,TEST_COURSE_ID);
+			Assignment a1 = assignmentRepository.findById(TEST_COURSE_ID).orElse(null);
 			
 			if (a1 != null)
 				assignmentRepository.delete(a1);
