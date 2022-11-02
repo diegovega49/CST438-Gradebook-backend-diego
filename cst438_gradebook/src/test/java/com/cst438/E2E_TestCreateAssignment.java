@@ -22,7 +22,7 @@ public class E2E_TestCreateAssignment {
 
 	public static final String CHROME_DRIVER_FILE_LOCATION = 
 			"C:/Drivers/chromedriver.exe";
-	public static final String URL = "http://localhost.com:3000";
+	public static final String URL = "http://localhost:3000";
 	public static final int SLEEP_DURATION = 1000;
 	public static final int TEST_COURSE_ID = 999001;
 	public static final String TEST_COURSE_TITLE = "cst363-database";
@@ -59,11 +59,11 @@ public class E2E_TestCreateAssignment {
 			driver.get(URL);
 			Thread.sleep(SLEEP_DURATION);
 			
-			we = driver.findElement(By.xpath("//button[@id='addAssignment']"));
+			we = driver.findElement(By.id("addAssignment"));
 			we.click();
 			Thread.sleep(SLEEP_DURATION);
 			
-			we = driver.findElement(By.xpath("//button[@id='add']"));
+			we = driver.findElement(By.id("add"));
 			we.click();
 			Thread.sleep(SLEEP_DURATION);
 			
@@ -76,7 +76,7 @@ public class E2E_TestCreateAssignment {
 			we = driver.findElement(By.name("courseTitle"));
 			we.sendKeys(TEST_COURSE_TITLE);
 			
-			we = driver.findElement(By.xpath("//button[@id='Add']"));
+			we = driver.findElement(By.id("Add"));
 			we.click();
 			Thread.sleep(SLEEP_DURATION);
 			
