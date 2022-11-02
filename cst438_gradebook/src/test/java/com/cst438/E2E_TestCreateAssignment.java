@@ -21,7 +21,7 @@ import com.cst438.domain.AssignmentRepository;
 public class E2E_TestCreateAssignment {
 
 	public static final String CHROME_DRIVER_FILE_LOCATION = 
-			"C:/Drivers/selenium/chromedriver.exe";
+			"C:/Drivers/chromedriver.exe";
 	public static final String URL = "http://localhost.com:3000";
 	public static final int SLEEP_DURATION = 1000;
 	public static final int TEST_COURSE_ID = 999001;
