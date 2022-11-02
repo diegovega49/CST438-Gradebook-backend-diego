@@ -207,17 +207,19 @@ public class GradeBookController {
 		}
 	}
 	
-	@PostMapping("/courses/{courseId}/assignments")
+//	@PostMapping("/courses/{courseId}/assignments")
+//	@Transactional
+//	public void createAssignment(@RequestBody Map<String, String> json, @PathVariable("courseId") int courseId) {
+	@PostMapping("/addnewassignment")
 	@Transactional
-	public void createAssignment(@RequestBody Map<String, String> json, @PathVariable("courseId") int courseId) {
-		
+	public void createAssignment(@RequestBody Map<String, String> json) {
 		String paramAssignmentName = json.get("assignmentName");
 		String paramDueDate = json.get("dueDate");
-		//String paramCourseTitle = json.get("courseTitle");
+		String paramCourseTitle = json.get("courseTitle");
 		
 		String email = "dwisneski@csumb.edu";
 		
-		Course course = courseRepository.findById(courseId).orElse(null);
+		Course course = courseRepository.findByTitle(paramCourseTitle);
 		
 		if (!course.getInstructor().equals(email)) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not authorized");
