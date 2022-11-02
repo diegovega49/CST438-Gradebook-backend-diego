@@ -74,5 +74,9 @@ public class Course {
 		return "Course [course_id=" + course_id + ", title=" + title + ", instructor=" + instructor + ", year=" + year
 				+ ", semester=" + semester + "]";
 	}
+	public Course orElse(Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
